@@ -1,0 +1,24 @@
+dev:
+  - Name: test-site-dev.${self:custom.rootDomain}
+    Type: A
+    AliasTarget:
+      DNSName: {"Fn::GetAtt": staticSiteCdn.DomainName}
+      HostedZoneId: Z2FDTNDATAQYW2
+  - Name: test-site-dev.${self:custom.rootDomain}
+    Type: AAAA
+    AliasTarget:
+      DNSName: {"Fn::GetAtt": staticSiteCdn.DomainName}
+      HostedZoneId: Z2FDTNDATAQYW2
+
+prod:
+  - Name: test-site.${self:custom.rootDomain}
+    Type: A
+    AliasTarget:
+      DNSName: {"Fn::GetAtt": staticSiteCdn.DomainName}
+      HostedZoneId: Z2FDTNDATAQYW2
+  - Name: test-site.${self:custom.rootDomain}
+    Type: AAAA
+    AliasTarget:
+      DNSName: {"Fn::GetAtt": staticSiteCdn.DomainName}
+      HostedZoneId: Z2FDTNDATAQYW2
+
