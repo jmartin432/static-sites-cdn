@@ -17,4 +17,4 @@ The CloudFormation Template creates the following resources:
 * Versions for each of the Lambda functions
 * DNS Records for subdomains
 
-Unit Tests are done with in Mocha/Chai
+Unit Tests are done with Mocha/Chai
