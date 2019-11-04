@@ -1,0 +1,311 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: The AWS CloudFormation template for Static Sites CDN
+
+Parameters:
+  Region:
+    Type: String
+    Default: us-east-1
+  TimeStamp:
+    Type: String
+  RootDomain:
+    Type: String
+    Default: justinlmartin.com
+  AccountId:
+    Type: String
+    Default: '{{resolve:ssm:Account-ID:1}}'
+  Stage:
+    Type: String
+    AllowedValues:
+      - dev
+      - prod
+    Default: dev
+    Description: Stage
+  ServiceName:
+    Type: String
+    Default: static-sites-cdn
+  SslCert:
+    Type: String
+    Default: '{{resolve:ssm:Static-Sites-SSL-Cert-ARN:1}}'
+
+Mappings:
+  AliasMap:
+    dev:
+      Aliases:
+        - test-site-dev.justinlmartin.com
+        - peaks-valleys-dev.justinlmartin.com
+    prod:
+      Aliases:
+        - test-site.justinlmartin.com
+        - peaks-valleys.justinlmartin.com
+  DeploymentBucketMap:
+    dev:
+      Name: '{{resolve:ssm:Static-Sites-CDN-Deploy-Bucket-Dev:1}}'
+    prod:
+      Name: '{{resolve:ssm:Static-Sites-CDN-Deploy-Bucket-Prod:1}}'
+  StaticSitesBucketMap:
+    dev:
+      Name: '{{resolve:ssm:Static-Sites-Bucket-Dev:1}}'
+    prod:
+      Name: '{{resolve:ssm:Static-Sites-Bucket-Prod:1}}'
+  SubdomainSuffixMap:
+    dev:
+      Suffix: '-dev'
+    prod:
+      Suffix: ''
+
+Resources:
+  StaticSitesCdnDeploymentBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::FindInMap:
+          - DeploymentBucketMap
+          - Ref: Stage
+          - Name
+      VersioningConfiguration:
+        Status: Suspended
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  StaticSitesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::FindInMap:
+          - StaticSitesBucketMap
+          - Ref: Stage
+          - Name
+      VersioningConfiguration:
+        Status: Enabled
+
+  CloudFrontOriginAccessIdentity:
+    Type: 'AWS::CloudFront::CloudFrontOriginAccessIdentity'
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Ref StaticSitesBucket
+
+  BucketReadPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref StaticSitesBucket
+      PolicyDocument:
+        Statement:
+          - Action: 's3:GetObject'
+            Effect: Allow
+            Resource: !Sub 'arn:aws:s3:::${StaticSitesBucket}/*'
+            Principal:
+              CanonicalUser: !GetAtt CloudFrontOriginAccessIdentity.S3CanonicalUserId
+
+  StaticSitesCdn:
+    Type: 'AWS::CloudFront::Distribution'
+    Properties:
+      DistributionConfig:
+        ViewerCertificate:
+          AcmCertificateArn: !Ref SslCert
+          SslSupportMethod: sni-only
+        CustomErrorResponses:
+        - ErrorCode: 403 # not found
+          ResponseCode: 404
+          ResponsePagePath: /error.html
+        DefaultRootObject: index.html
+        Enabled: true
+        Aliases: !FindInMap [AliasMap, !Ref Stage, Aliases]
+        HttpVersion: http2
+        Origins:
+        - DomainName: !GetAtt StaticSitesBucket.DomainName
+          Id: S3Origin
+          S3OriginConfig:
+            OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}'
+          OriginCustomHeaders:
+            - HeaderName: BucketOrigin
+              HeaderValue: !Ref StaticSitesBucket
+        DefaultCacheBehavior:
+          ViewerProtocolPolicy: allow-all
+          TargetOriginId: S3Origin
+          AllowedMethods:
+            - GET
+            - HEAD
+          Compress: true
+          DefaultTTL: 30
+          MinTTL: 10
+          ForwardedValues:
+            QueryString: true
+            Cookies:
+              Forward: all
+            Headers:
+              - Host
+          LambdaFunctionAssociations:
+            - EventType: origin-request
+              LambdaFunctionARN: !Ref OriginRouterLambdaVersion
+            - EventType: viewer-request
+              LambdaFunctionARN: !Ref CustomHeadersLambdaVersion
+
+  StaticSitesDnsRecords:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneName: justinlmartin.com.
+      Comment: DNS records associated with Static Sites CDN
+      RecordSets:
+        - Name: !Select
+          - 0
+          - Fn::FindInMap:
+            - AliasMap
+            - !Ref Stage
+            - Aliases
+          Type: A
+          AliasTarget:
+            DNSName:
+              Fn::GetAtt: StaticSitesCdn.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Select
+          - 0
+          - Fn::FindInMap:
+              - AliasMap
+              - !Ref Stage
+              - Aliases
+          Type: AAAA
+          AliasTarget:
+            DNSName:
+              Fn::GetAtt: StaticSitesCdn.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Select
+          - 1
+          - Fn::FindInMap:
+              - AliasMap
+              - !Ref Stage
+              - Aliases
+          Type: A
+          AliasTarget:
+            DNSName:
+              Fn::GetAtt: StaticSitesCdn.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Select
+          - 1
+          - Fn::FindInMap:
+              - AliasMap
+              - !Ref Stage
+              - Aliases
+          Type: AAAA
+          AliasTarget:
+            DNSName:
+              Fn::GetAtt: StaticSitesCdn.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+
+#  OriginRouterLogGroup:
+#    Type: AWS::Logs::LogGroup
+#    Properties:
+#      LogGroupName: !Sub '/aws/lambda/static-sites-cdn-${Stage}-lambda'
+
+  IamRoleLambdaExecution:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - edgelambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub 'static-sites-cdn-${Stage}-lambdaPolicy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - logs:CreateLogGroup
+                  - logs:DescribeLogStreams
+                Resource:
+                  - arn:aws:logs:*:*:*
+              - Sid: AllowS3Access
+                Effect: Allow
+                Action:
+                  - s3:*
+                Resource:
+                  - !Sub arn:aws:s3:::${StaticSitesBucket}
+                  - !Sub arn:aws:s3:::${StaticSitesBucket}/*
+      Path: "/"
+      RoleName: !Sub static-sites-cdn-${Stage}-${Region}-lambdaRole
+
+  OriginRouterLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Ref StaticSitesCdnDeploymentBucket
+        S3Key: !Sub ${TimeStamp}/lambdas${TimeStamp}.zip
+      FunctionName: !Sub static-sites-origin-router-${Stage}-${TimeStamp}
+      Handler: originRouter.handler
+      MemorySize: 128
+      Role: !GetAtt IamRoleLambdaExecution.Arn
+      Runtime: nodejs8.10
+      Timeout: 5
+      Description: Routes Cloud Front Requests to S3 Bucket based on subdomain
+    DependsOn:
+#      - OriginRouterLogGroup
+      - IamRoleLambdaExecution
+
+  OriginRouterLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref OriginRouterLambdaFunction
+      Description: Routes Cloud Front Requests to S3 Bucket based on subdomain
+
+  CustomHeadersLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Ref StaticSitesCdnDeploymentBucket
+        S3Key: !Sub ${TimeStamp}/lambdas${TimeStamp}.zip
+      FunctionName: !Sub static-sites-custom-headers-${Stage}-${TimeStamp}
+      Handler: customHeaders.handler
+      MemorySize: 128
+      Role: !GetAtt IamRoleLambdaExecution.Arn
+      Runtime: nodejs8.10
+      Timeout: 5
+      Description: Adds original host request as x-forwarded-host
+    DependsOn:
+#      - OriginRouterLogGroup
+      - IamRoleLambdaExecution
+
+  CustomHeadersLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref CustomHeadersLambdaFunction
+      Description: Adds original host request as x-forwarded-host
+
+Outputs:
+  LatestTimeStamp:
+    Value: !Ref TimeStamp
+  StaticSitesCdnDeploymentBucketName:
+    Value: !Ref StaticSitesCdnDeploymentBucket
+  StaticSitesBucketName:
+    Value: !Ref StaticSitesBucket
+  StaticsSitesBucketUrl:
+    Value: !GetAtt StaticSitesBucket.WebsiteURL
+  DistributionId:
+    Description: 'CloudFront Distribution ID'
+    Value: !Ref StaticSitesCdn
+  DistributionDomain:
+    Description: 'Cloudfront Domain'
+    Value: !GetAtt StaticSitesCdn.DomainName
+  LambdaRoleArn:
+    Value: !GetAtt IamRoleLambdaExecution.Arn
+  OriginRouterLambdaFunctionName:
+    Value: !Ref OriginRouterLambdaFunction
+  OriginRouterLambdaFunctionQualifiedArn:
+    Description: Current Lambda function version
+    Value: !Ref OriginRouterLambdaVersion
+  CustomHeadersLambdaFunctionName:
+    Value: !Ref CustomHeadersLambdaFunction
+  CustomHeadersLambdaFunctionQualifiedArn:
+    Description: Current Lambda function version
+    Value: !Ref CustomHeadersLambdaVersion

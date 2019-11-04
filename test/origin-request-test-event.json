@@ -1,0 +1,85 @@
+{
+    "Records": [
+        {
+            "cf": {
+                "config": {
+                    "distributionDomainName": "testcdn.cloudfront.net",
+                    "distributionId": "E38UTESTCDNID",
+                    "eventType": "origin-request"
+                },
+                "request": {
+                    "clientIp": "75.164.141.207",
+                    "headers": {
+                        "host": [
+                            {
+                                "key": "Host",
+                                "value": "test-site-dev.justinlmartin.com"
+                            }
+                        ],
+                        "x-forwarded-for": [
+                            {
+                                "key": "X-Forwarded-For",
+                                "value": "75.164.141.207"
+                            }
+                        ],
+                        "user-agent": [
+                            {
+                                "key": "User-Agent",
+                                "value": "Amazon CloudFront"
+                            }
+                        ],
+                        "via": [
+                            {
+                                "key": "Via",
+                                "value": "1.1 7ab604166a3744f1ac54973fbd737630.cloudfront.net (CloudFront)"
+                            }
+                        ],
+                        "accept-encoding": [
+                            {
+                                "key": "Accept-Encoding",
+                                "value": "gzip"
+                            }
+                        ],
+                        "upgrade-insecure-requests": [
+                            {
+                                "key": "Upgrade-Insecure-Requests",
+                                "value": "1"
+                            }
+                        ],
+                        "x-forwarded-host": [
+                            {
+                                "key": "X-Forwarded-Host",
+                                "value": "test-site-dev.justinlmartin.com"
+                            }
+                        ],
+                        "cache-control": [
+                            {
+                                "key": "Cache-Control",
+                                "value": "max-age=0"
+                            }
+                        ]
+                    },
+                    "method": "GET",
+                    "origin": {
+                        "s3": {
+                            "authMethod": "origin-access-identity",
+                            "customHeaders": {
+                                "bucketorigin": [
+                                    {
+                                        "key": "BucketOrigin",
+                                        "value": "static-sites-bucket"
+                                    }
+                                ]
+                            },
+                            "domainName": "static-sites-bucket.s3.amazonaws.com",
+                            "path": "",
+                            "region": "us-east-1"
+                        }
+                    },
+                    "querystring": "",
+                    "uri": "/index.html"
+                }
+            }
+        }
+    ]
+}

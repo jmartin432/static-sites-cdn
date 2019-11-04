@@ -1,0 +1,23 @@
+{
+  "name": "static-site-cdn",
+  "version": "1.0.0",
+  "description": "Static Site CDN for JustinLMartin.com",
+  "author": "Justin Martin <info@justinlmartin.com>",
+  "private": true,
+  "scripts": {
+    "test": "mocha",
+    "updateStack": "sh ./scripts/updateStack.sh",
+    "createStack": "sh ./scripts/createStack.sh",
+    "deleteStack": "sh ./scripts/deleteStack.sh",
+    "describeStack": "sh ./scripts/describeStack.sh",
+    "uploadFiles": "sh ./scripts/uploadFiles.sh"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@silvermine/serverless-plugin-cloudfront-lambda-edge": "2.1.1",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2"
+  },
+  "engines": {},
+  "browserslist": []
+}

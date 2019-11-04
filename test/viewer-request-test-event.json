@@ -1,0 +1,63 @@
+{
+    "Records": [
+        {
+            "cf": {
+                "config": {
+                    "distributionDomainName": "testcdn.cloudfront.net",
+                    "distributionId": "E38UTESTCDNID",
+                    "eventType": "origin-request"
+                },
+                "request": {
+                    "clientIp": "75.164.141.207",
+                    "headers": {
+                        "host": [
+                            {
+                                "key": "Host",
+                                "value": "test-site-dev.justinlmartin.com"
+                            }
+                        ],
+                        "user-agent": [
+                            {
+                                "key": "User-Agent",
+                                "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:71.0) Gecko/20100101 Firefox/71.0"
+                            }
+                        ],
+                        "accept": [
+                            {
+                                "key": "Accept",
+                                "value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                            }
+                        ],
+                        "accept-language": [
+                            {
+                                "key": "Accept-Language",
+                                "value": "en-US,en;q=0.5"
+                            }
+                        ],
+                        "accept-encoding": [
+                            {
+                                "key": "Accept-Encoding",
+                                "value": "gzip, deflate"
+                            }
+                        ],
+                        "upgrade-insecure-requests": [
+                            {
+                                "key": "Upgrade-Insecure-Requests",
+                                "value": "1"
+                            }
+                        ],
+                        "cache-control": [
+                            {
+                                "key": "Cache-Control",
+                                "value": "max-age=0"
+                            }
+                        ]
+                    },
+                    "method": "GET",
+                    "querystring": "",
+                    "uri": "/"
+                }
+            }
+        }
+    ]
+}

@@ -1,5 +1,0 @@
-dev:
-  - "test-site-dev.justinlmartin.com"
-
-prod:
-  - "test-site.justinlmartin.com"
