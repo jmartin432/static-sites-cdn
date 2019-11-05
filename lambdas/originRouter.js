@@ -9,6 +9,7 @@ exports.handler = (event, context, callback) => {
     const testSite = 'test-site';
     const peaksValleys = 'peaks-valleys';
     const creativeCoding = 'creative-coding';
+    const hangman = 'hangman';
 
     if (routingUrl.startsWith(testSite)) {
         console.log('Routing to test-site');
@@ -19,11 +20,13 @@ exports.handler = (event, context, callback) => {
     } else if (routingUrl.startsWith(creativeCoding)) {
         console.log('Routing to creative-coding');
         request.origin.s3.path = `/${creativeCoding}`
+    } else if (routingUrl.startsWith(hangman)) {
+        console.log('Routing to hangman');
+        request.origin.s3.path = `/${hangman}`
     } else {
         console.log('Routing to default root object as Default');
     }
     request.headers['host'] = [{ key: 'Host', value: bucketDomain}];
-    request.uri = '/index.html';
     console.log('Updated Request ' + JSON.stringify(request));
     callback(null, request);
 };

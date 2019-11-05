@@ -34,11 +34,13 @@ Mappings:
         - test-site-dev.justinlmartin.com
         - peaks-valleys-dev.justinlmartin.com
         - creative-coding-dev.justinlmartin.com
+        - hangman-dev.justinlmartin.com
     prod:
       Aliases:
         - test-site.justinlmartin.com
         - peaks-valleys.justinlmartin.com
         - creative-coding.justinlmartin.com
+        - hangman.justinlmartin.com
   DeploymentBucketMap:
     dev:
       Name: '{{resolve:ssm:Static-Sites-CDN-Deploy-Bucket-Dev:1}}'
@@ -158,37 +160,34 @@ Resources:
             - Aliases
           Type: A
           AliasTarget:
-            DNSName:
-              Fn::GetAtt: StaticSitesCdn.DomainName
+            DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: Z2FDTNDATAQYW2
         - Name: !Select
           - 0
           - Fn::FindInMap:
-              - AliasMap
-              - !Ref Stage
-              - Aliases
+            - AliasMap
+            - !Ref Stage
+            - Aliases
           Type: AAAA
           AliasTarget:
-            DNSName:
-              Fn::GetAtt: StaticSitesCdn.DomainName
+            DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: Z2FDTNDATAQYW2
         - Name: !Select
           - 1
           - Fn::FindInMap:
-              - AliasMap
-              - !Ref Stage
-              - Aliases
+            - AliasMap
+            - !Ref Stage
+            - Aliases
           Type: A
           AliasTarget:
-            DNSName:
-              Fn::GetAtt: StaticSitesCdn.DomainName
+            DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: Z2FDTNDATAQYW2
         - Name: !Select
           - 1
           - Fn::FindInMap:
-              - AliasMap
-              - !Ref Stage
-              - Aliases
+            - AliasMap
+            - !Ref Stage
+            - Aliases
           Type: AAAA
           AliasTarget:
             DNSName:
@@ -205,17 +204,36 @@ Resources:
             DNSName:
               Fn::GetAtt: StaticSitesCdn.DomainName
             HostedZoneId: Z2FDTNDATAQYW2
-            - Name: !Select
-              - 2
-              - Fn::FindInMap:
-                - AliasMap
-                - !Ref Stage
-                - Aliases
-              Type: AAAA
-              AliasTarget:
-                DNSName:
-                  Fn::GetAtt: StaticSitesCdn.DomainName
-                HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Select
+          - 2
+          - Fn::FindInMap:
+            - AliasMap
+            - !Ref Stage
+            - Aliases
+          Type: AAAA
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Select
+          - 3
+          - Fn::FindInMap:
+            - AliasMap
+            - !Ref Stage
+            - Aliases
+          Type: A
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Select
+          - 3
+          - Fn::FindInMap:
+            - AliasMap
+            - !Ref Stage
+            - Aliases
+          Type: AAAA
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
 
 #  OriginRouterLogGroup:
 #    Type: AWS::Logs::LogGroup
@@ -236,7 +254,7 @@ Resources:
             Action:
               - sts:AssumeRole
       Policies:
-        - PolicyName: !Sub 'static-sites-cdn-${Stage}-lambdaPolicy'
+        - PolicyName: !Sub static-sites-cdn-${Stage}-lambdaPolicy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
