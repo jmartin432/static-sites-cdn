@@ -8,6 +8,7 @@ exports.handler = (event, context, callback) => {
 
     const testSite = 'test-site';
     const peaksValleys = 'peaks-valleys';
+    const creativeCoding = 'creative-coding';
 
     if (routingUrl.startsWith(testSite)) {
         console.log('Routing to test-site');
@@ -15,6 +16,9 @@ exports.handler = (event, context, callback) => {
     } else if (routingUrl.startsWith(peaksValleys)) {
         console.log('Routing to peaks-valleys');
         request.origin.s3.path = `/${peaksValleys}`
+    } else if (routingUrl.startsWith(creativeCoding)) {
+        console.log('Routing to creative-coding');
+        request.origin.s3.path = `/${creativeCoding}`
     } else {
         console.log('Routing to default root object as Default');
     }
