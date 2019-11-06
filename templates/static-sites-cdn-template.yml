@@ -50,7 +50,7 @@ Mappings:
     dev:
       Name: '{{resolve:ssm:Static-Sites-Bucket-Dev:1}}'
     prod:
-      Name: '{{resolve:ssm:Static-Sites-Bucket-Prod:1}}'
+      Name: '{{resolve:ssm:Static-Sites-Bucket-Prod:2}}'
   SubdomainSuffixMap:
     dev:
       Suffix: '-dev'

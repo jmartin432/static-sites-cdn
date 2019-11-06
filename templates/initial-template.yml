@@ -1,0 +1,95 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: The AWS CloudFormation Template for Initializing S3 Buckets
+
+Parameters:
+  Region:
+    Type: String
+    Default: us-east-1
+  TimeStamp:
+    Type: String
+  RootDomain:
+    Type: String
+    Default: justinlmartin.com
+  AccountId:
+    Type: String
+    Default: '{{resolve:ssm:Account-ID:1}}'
+  Stage:
+    Type: String
+    AllowedValues:
+      - dev
+      - prod
+    Default: dev
+    Description: Stage
+  ServiceName:
+    Type: String
+    Default: static-sites-cdn
+  SslCert:
+    Type: String
+    Default: '{{resolve:ssm:Static-Sites-SSL-Cert-ARN:1}}'
+
+Mappings:
+  AliasMap:
+    dev:
+      Aliases:
+        - test-site-dev.justinlmartin.com
+        - peaks-valleys-dev.justinlmartin.com
+        - creative-coding-dev.justinlmartin.com
+        - hangman-dev.justinlmartin.com
+    prod:
+      Aliases:
+        - test-site.justinlmartin.com
+        - peaks-valleys.justinlmartin.com
+        - creative-coding.justinlmartin.com
+        - hangman.justinlmartin.com
+  DeploymentBucketMap:
+    dev:
+      Name: '{{resolve:ssm:Static-Sites-CDN-Deploy-Bucket-Dev:1}}'
+    prod:
+      Name: '{{resolve:ssm:Static-Sites-CDN-Deploy-Bucket-Prod:1}}'
+  StaticSitesBucketMap:
+    dev:
+      Name: '{{resolve:ssm:Static-Sites-Bucket-Dev:1}}'
+    prod:
+      Name: '{{resolve:ssm:Static-Sites-Bucket-Prod:2}}'
+  SubdomainSuffixMap:
+    dev:
+      Suffix: '-dev'
+    prod:
+      Suffix: ''
+
+Resources:
+  StaticSitesCdnDeploymentBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::FindInMap:
+          - DeploymentBucketMap
+          - Ref: Stage
+          - Name
+      VersioningConfiguration:
+        Status: Suspended
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  StaticSitesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::FindInMap:
+          - StaticSitesBucketMap
+          - Ref: Stage
+          - Name
+      VersioningConfiguration:
+        Status: Enabled
+
+Outputs:
+  LatestTimeStamp:
+    Value: !Ref TimeStamp
+  StaticSitesCdnDeploymentBucketName:
+    Value: !Ref StaticSitesCdnDeploymentBucket
+  StaticSitesBucketName:
+    Value: !Ref StaticSitesBucket
+  StaticsSitesBucketUrl:
+    Value: !GetAtt StaticSitesBucket.WebsiteURL
