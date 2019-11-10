@@ -35,12 +35,18 @@ Mappings:
         - peaks-valleys-dev.justinlmartin.com
         - creative-coding-dev.justinlmartin.com
         - hangman-dev.justinlmartin.com
+        - sunrise-dev.justinlmartin.com
+        - blackjack-dev.justinlmartin.com
+        - portfolio-dev.justinlmartin.com
     prod:
       Aliases:
         - test-site.justinlmartin.com
         - peaks-valleys.justinlmartin.com
         - creative-coding.justinlmartin.com
         - hangman.justinlmartin.com
+        - sunrise.justinlmartin.com
+        - blackjack.justinlmartin.com
+        - portfolio.justinlmartin.com
   DeploymentBucketMap:
     dev:
       Name: '{{resolve:ssm:Static-Sites-CDN-Deploy-Bucket-Dev:1}}'
@@ -226,6 +232,66 @@ Resources:
             HostedZoneId: Z2FDTNDATAQYW2
         - Name: !Select
           - 3
+          - Fn::FindInMap:
+            - AliasMap
+            - !Ref Stage
+            - Aliases
+          Type: AAAA
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Select
+          - 4
+          - Fn::FindInMap:
+            - AliasMap
+            - !Ref Stage
+            - Aliases
+          Type: A
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Select
+          - 4
+          - Fn::FindInMap:
+            - AliasMap
+            - !Ref Stage
+            - Aliases
+          Type: AAAA
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Select
+          - 5
+          - Fn::FindInMap:
+            - AliasMap
+            - !Ref Stage
+            - Aliases
+          Type: A
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Select
+          - 5
+          - Fn::FindInMap:
+            - AliasMap
+            - !Ref Stage
+            - Aliases
+          Type: AAAA
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Select
+          - 6
+          - Fn::FindInMap:
+            - AliasMap
+            - !Ref Stage
+            - Aliases
+          Type: A
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Select
+          - 6
           - Fn::FindInMap:
             - AliasMap
             - !Ref Stage
