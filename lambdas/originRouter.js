@@ -33,7 +33,7 @@ exports.handler = (event, context, callback) => {
         console.log('Routing to blackjack');
         request.origin.s3.path = `/${blackjack}`;
     } else if (routingUrl.startsWith(portfolio)) {
-        console.log('Routing to blackjack');
+        console.log('Routing to portfolio');
         request.origin.s3.path = `/${portfolio}`;
     } else {
         console.log('Routing to default root object as Default');

@@ -82,11 +82,7 @@ Resources:
   StaticSitesBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName:
-        Fn::FindInMap:
-          - StaticSitesBucketMap
-          - Ref: Stage
-          - Name
+      BucketName: !FindInMap [StaticSitesBucketMap, !Ref Stage, Name]
       VersioningConfiguration:
         Status: Enabled
 
@@ -121,7 +117,7 @@ Resources:
           ResponsePagePath: /error.html
         DefaultRootObject: index.html
         Enabled: true
-        Aliases: !FindInMap [AliasMap, !Ref Stage, Aliases]
+        Aliases: !FindInMap [ AliasMap, !Ref Stage, Aliases ]
         HttpVersion: http2
         Origins:
         - DomainName: !GetAtt StaticSitesBucket.DomainName
@@ -300,11 +296,6 @@ Resources:
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: Z2FDTNDATAQYW2
-
-#  OriginRouterLogGroup:
-#    Type: AWS::Logs::LogGroup
-#    Properties:
-#      LogGroupName: !Sub '/aws/lambda/static-sites-cdn-${Stage}-lambda'
 
   IamRoleLambdaExecution:
     Type: AWS::IAM::Role
