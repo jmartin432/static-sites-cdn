@@ -128,7 +128,7 @@ Resources:
             - HeaderName: BucketOrigin
               HeaderValue: !Ref StaticSitesBucket
         DefaultCacheBehavior:
-          ViewerProtocolPolicy: allow-all
+          ViewerProtocolPolicy: redirect-to-https
           TargetOriginId: S3Origin
           AllowedMethods:
             - GET
