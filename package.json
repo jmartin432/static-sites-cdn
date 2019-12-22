@@ -10,7 +10,8 @@
     "createStack": "sh ./scripts/createStack.sh",
     "deleteStack": "sh ./scripts/deleteStack.sh",
     "describeStack": "sh ./scripts/describeStack.sh",
-    "uploadFiles": "sh ./scripts/uploadFiles.sh"
+    "uploadFiles": "sh ./scripts/uploadFiles.sh",
+    "createAdditionalDns": "sh ./scripts/additionalDnsRecords.sh"
   },
   "dependencies": {},
   "devDependencies": {

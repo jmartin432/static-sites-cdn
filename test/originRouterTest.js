@@ -215,3 +215,33 @@ it('Test portfolio-prod', () => {
 
     });
 });
+
+it('Test www prefix', () => {
+    event.Records[0].cf.request.headers.host[0].value = "www.justinlmartin.com";
+    event.Records[0].cf.request.origin.s3.path = '/';
+    originRouter.handler(event, {}, function(err, result) {
+      if (err)
+        console.log(err);
+      if (result)
+        console.log("Result: " + JSON.stringify(result, null, 2));
+        expect(result.origin.s3.path).to.equal('/portfolio');
+        expect(result.origin.s3.domainName).to.equal('static-sites-bucket.s3.amazonaws.com');
+        expect(result.headers.host[0].value).to.equal('static-sites-bucket.s3.amazonaws.com');
+
+    });
+});
+
+it('Test top level domain', () => {
+    event.Records[0].cf.request.headers.host[0].value = "justinlmartin.com";
+    event.Records[0].cf.request.origin.s3.path = '/';
+    originRouter.handler(event, {}, function(err, result) {
+      if (err)
+        console.log(err);
+      if (result)
+        console.log("Result: " + JSON.stringify(result, null, 2));
+        expect(result.origin.s3.path).to.equal('/portfolio');
+        expect(result.origin.s3.domainName).to.equal('static-sites-bucket.s3.amazonaws.com');
+        expect(result.headers.host[0].value).to.equal('static-sites-bucket.s3.amazonaws.com');
+
+    });
+});

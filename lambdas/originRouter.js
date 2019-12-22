@@ -13,6 +13,8 @@ exports.handler = (event, context, callback) => {
     const sunriseSunset = 'sunrise';
     const blackjack = 'blackjack';
     const portfolio = 'portfolio';
+    const www = 'www';
+    const topLevel = 'justin';
 
     if (routingUrl.startsWith(testSite)) {
         console.log('Routing to test-site');
@@ -32,7 +34,7 @@ exports.handler = (event, context, callback) => {
     } else if (routingUrl.startsWith(blackjack)) {
         console.log('Routing to blackjack');
         request.origin.s3.path = `/${blackjack}`;
-    } else if (routingUrl.startsWith(portfolio)) {
+    } else if (routingUrl.startsWith(portfolio) || routingUrl.startsWith(www) || routingUrl.startsWith(topLevel)){
         console.log('Routing to portfolio');
         request.origin.s3.path = `/${portfolio}`;
     } else {

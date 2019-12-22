@@ -47,6 +47,9 @@ Mappings:
         - sunrise.justinlmartin.com
         - blackjack.justinlmartin.com
         - portfolio.justinlmartin.com
+#      Make sure these two are always last
+        - www.justinlmartin.com
+        - justinlmartin.com
   DeploymentBucketMap:
     dev:
       Name: '{{resolve:ssm:Static-Sites-CDN-Deploy-Bucket-Dev:1}}'
