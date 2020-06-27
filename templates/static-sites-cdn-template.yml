@@ -1,6 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: The AWS CloudFormation template for Static Sites CDN
 
+# 1. Add URLs to Mappings
+# 2. Add DNS Records to StaticSitesDnsRecords
+
 Parameters:
   Region:
     Type: String
@@ -35,18 +38,20 @@ Mappings:
         - peaks-valleys-dev.justinlmartin.com
         - creative-coding-dev.justinlmartin.com
         - hangman-dev.justinlmartin.com
-        - sunrise-dev.justinlmartin.com
+        - sunrise-sunset-dev.justinlmartin.com
         - blackjack-dev.justinlmartin.com
         - portfolio-dev.justinlmartin.com
+        - sunflower-synth-dev.justinlmartin.com
     prod:
       Aliases:
         - test-site.justinlmartin.com
         - peaks-valleys.justinlmartin.com
         - creative-coding.justinlmartin.com
         - hangman.justinlmartin.com
-        - sunrise.justinlmartin.com
+        - sunrise-sunset.justinlmartin.com
         - blackjack.justinlmartin.com
         - portfolio.justinlmartin.com
+        - sunflower-synth.justinlmartin.com
 #      Make sure these two are always last
         - www.justinlmartin.com
         - justinlmartin.com
@@ -299,6 +304,26 @@ Resources:
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Select
+          - 7
+          - Fn::FindInMap:
+            - AliasMap
+            - !Ref Stage
+            - Aliases
+          Type: A
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Select
+          - 7
+          - Fn::FindInMap:
+            - AliasMap
+            - !Ref Stage
+            - Aliases
+          Type: AAAA
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
 
   IamRoleLambdaExecution:
     Type: AWS::IAM::Role
@@ -347,7 +372,7 @@ Resources:
       Handler: originRouter.handler
       MemorySize: 128
       Role: !GetAtt IamRoleLambdaExecution.Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Timeout: 5
       Description: Routes Cloud Front Requests to S3 Bucket based on subdomain
     DependsOn:
@@ -371,7 +396,7 @@ Resources:
       Handler: customHeaders.handler
       MemorySize: 128
       Role: !GetAtt IamRoleLambdaExecution.Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Timeout: 5
       Description: Adds original host request as x-forwarded-host
     DependsOn:
