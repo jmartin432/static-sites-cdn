@@ -9,7 +9,7 @@ exports.handler = (event, context, callback) => {
     const testSite = 'test-site';
     const peaksValleys = 'peaks-valleys';
     const creativeCoding = 'creative-coding';
-    const hangman = 'hangman';
+    const spaceblobman = 'spaceblobman';
     const sunriseSunset = 'sunrise-sunset';
     const blackjack = 'blackjack';
     const portfolio = 'portfolio';
@@ -26,9 +26,9 @@ exports.handler = (event, context, callback) => {
     } else if (routingUrl.startsWith(creativeCoding)) {
         console.log('Routing to creative-coding');
         request.origin.s3.path = `/${creativeCoding}`;
-    } else if (routingUrl.startsWith(hangman)) {
-        console.log('Routing to hangman');
-        request.origin.s3.path = `/${hangman}`;
+    } else if (routingUrl.startsWith(spaceblobman)) {
+        console.log('Routing to spaceblobman');
+        request.origin.s3.path = `/${spaceblobman}`;
     } else if (routingUrl.startsWith(sunriseSunset)) {
         console.log('Routing to sunrise-sunset');
         request.origin.s3.path = `/${sunriseSunset}`

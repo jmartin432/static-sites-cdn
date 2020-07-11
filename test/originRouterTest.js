@@ -48,15 +48,15 @@ it('Test creative-coding-dev', () => {
     });
 });
 
-it('Test hangman-dev', () => {
-    event.Records[0].cf.request.headers.host[0].value = "hangman-dev.justinlmartin.com";
+it('Test spaceblobman-dev', () => {
+    event.Records[0].cf.request.headers.host[0].value = "spaceblobman-dev.justinlmartin.com";
     event.Records[0].cf.request.origin.s3.path = '/';
     originRouter.handler(event, {}, function(err, result) {
       if (err)
         console.log(err);
       if (result)
         console.log("Result: " + JSON.stringify(result, null, 2));
-        expect(result.origin.s3.path).to.equal('/hangman');
+        expect(result.origin.s3.path).to.equal('/spaceblobman');
         expect(result.origin.s3.domainName).to.equal('static-sites-bucket.s3.amazonaws.com');
         expect(result.headers.host[0].value).to.equal('static-sites-bucket.s3.amazonaws.com');
 
@@ -156,15 +156,15 @@ it('Test creative-coding-prod', () => {
     });
 });
 
-it('Test hangman-prod', () => {
-    event.Records[0].cf.request.headers.host[0].value = "hangman.justinlmartin.com";
+it('Test spaceblobman-prod', () => {
+    event.Records[0].cf.request.headers.host[0].value = "spaceblobman.justinlmartin.com";
     event.Records[0].cf.request.origin.s3.path = '/';
     originRouter.handler(event, {}, function(err, result) {
       if (err)
         console.log(err);
       if (result)
         console.log("Result: " + JSON.stringify(result, null, 2));
-        expect(result.origin.s3.path).to.equal('/hangman');
+        expect(result.origin.s3.path).to.equal('/spaceblobman');
         expect(result.origin.s3.domainName).to.equal('static-sites-bucket.s3.amazonaws.com');
         expect(result.headers.host[0].value).to.equal('static-sites-bucket.s3.amazonaws.com');
 
