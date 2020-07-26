@@ -13,6 +13,6 @@ by this [custom pipeline](https://github.com/jmartin432/static-sites-pipeline).
 * AWS EdgeLambda (for routing CDN requests)
 * AWS IAM (Identity Access Management, for managing roles and access policies)
 * AWS CloudWatch (for logging)
-* Python 3
+* Node.js 12
 * YAML
 * Mocha/Chai (for testing)
