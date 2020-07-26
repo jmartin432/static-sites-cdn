@@ -12,7 +12,7 @@ Parameters:
     Default: justinlmartin.com
   AccountId:
     Type: String
-    Default: '{{resolve:ssm:Account-ID:1}}'
+    Default: '{{resolve:ssm:account-id:1}}'
   Stage:
     Type: String
     AllowedValues:
@@ -25,7 +25,7 @@ Parameters:
     Default: static-sites-cdn
   SslCert:
     Type: String
-    Default: '{{resolve:ssm:Static-Sites-SSL-Cert-ARN:1}}'
+    Default: '{{resolve:ssm:static-sites-cdn-ssl-cert-arn:1}}'
 
 Mappings:
   AliasMap:

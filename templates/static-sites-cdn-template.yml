@@ -15,7 +15,7 @@ Parameters:
     Default: justinlmartin.com
   AccountId:
     Type: String
-    Default: '{{resolve:ssm:Account-ID:1}}'
+    Default: '{{resolve:ssm:account-id:1}}'
   Stage:
     Type: String
     AllowedValues:
@@ -28,7 +28,7 @@ Parameters:
     Default: static-sites-cdn
   SslCert:
     Type: String
-    Default: '{{resolve:ssm:Static-Sites-SSL-Cert-ARN:1}}'
+    Default: '{{resolve:ssm:static-sites-cdn-ssl-cert-arn:1}}'
 
 Mappings:
   AliasMap:
@@ -131,7 +131,7 @@ Resources:
         - DomainName: !GetAtt StaticSitesBucket.DomainName
           Id: S3Origin
           S3OriginConfig:
-            OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}'
+            OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}
           OriginCustomHeaders:
             - HeaderName: BucketOrigin
               HeaderValue: !Ref StaticSitesBucket
@@ -376,7 +376,6 @@ Resources:
       Timeout: 5
       Description: Routes Cloud Front Requests to S3 Bucket based on subdomain
     DependsOn:
-#      - OriginRouterLogGroup
       - IamRoleLambdaExecution
 
   OriginRouterLambdaVersion:
@@ -400,7 +399,6 @@ Resources:
       Timeout: 5
       Description: Adds original host request as x-forwarded-host
     DependsOn:
-#      - OriginRouterLogGroup
       - IamRoleLambdaExecution
 
   CustomHeadersLambdaVersion:
