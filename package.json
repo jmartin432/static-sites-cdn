@@ -6,12 +6,11 @@
   "private": true,
   "scripts": {
     "test": "mocha",
-    "updateStack": "sh ./scripts/updateStack.sh",
-    "createStack": "sh ./scripts/createStack.sh",
-    "deleteStack": "sh ./scripts/deleteStack.sh",
-    "describeStack": "sh ./scripts/describeStack.sh",
-    "uploadFiles": "sh ./scripts/uploadFiles.sh",
-    "createAdditionalDns": "sh ./scripts/additionalDnsRecords.sh"
+    "update-stack": "sh scripts/update-stack.sh",
+    "create-stack": "sh scripts/create-stack.sh",
+    "delete-stack": "sh scripts/delete-stack.sh",
+    "describe-stack": "sh scripts/describe-stack.sh",
+    "create-additional-dns": "sh scripts/additional-dns-records.sh"
   },
   "dependencies": {},
   "devDependencies": {

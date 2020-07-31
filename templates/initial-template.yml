@@ -33,16 +33,11 @@ Mappings:
       Aliases:
     prod:
       Aliases:
-  DeploymentBucketMap:
+  LambdasBucketMap:
     dev:
-      Name: '{{resolve:ssm:Static-Sites-CDN-Deploy-Bucket-Dev:1}}'
+      Name: '{{resolve:ssm:static-sites-cdn-lambdas-bucket-dev:1}}'
     prod:
-      Name: '{{resolve:ssm:Static-Sites-CDN-Deploy-Bucket-Prod:1}}'
-  StaticSitesBucketMap:
-    dev:
-      Name: '{{resolve:ssm:Static-Sites-Bucket-Dev:1}}'
-    prod:
-      Name: '{{resolve:ssm:Static-Sites-Bucket-Prod:2}}'
+      Name: '{{resolve:ssm:static-sites-cdn-lambdas-bucket-prod:1}}'
   SubdomainSuffixMap:
     dev:
       Suffix: '-dev'
@@ -50,12 +45,12 @@ Mappings:
       Suffix: ''
 
 Resources:
-  StaticSitesCdnDeploymentBucket:
+  LambdasBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName:
         Fn::FindInMap:
-          - DeploymentBucketMap
+          - LambdasBucketMap
           - Ref: Stage
           - Name
       VersioningConfiguration:
@@ -64,17 +59,6 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
-
-  StaticSitesBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName:
-        Fn::FindInMap:
-          - StaticSitesBucketMap
-          - Ref: Stage
-          - Name
-      VersioningConfiguration:
-        Status: Enabled
 
 Outputs:
   LatestTimeStamp:

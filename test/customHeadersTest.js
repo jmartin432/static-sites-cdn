@@ -1,5 +1,5 @@
 const expect  = require('chai').expect;
-const customHeaders = require('../lambdas/customHeaders');
+const customHeaders = require('../lambdas/custom-headers-lambda');
 const event = require('./viewer-request-test-event');
 
 it('Test test-site-dev', () => {
