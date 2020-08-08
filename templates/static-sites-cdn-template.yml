@@ -161,6 +161,7 @@ Resources:
     Type: 'AWS::CloudFront::Distribution'
     Properties:
       DistributionConfig:
+        Comment: !Ref Stage
         ViewerCertificate:
           AcmCertificateArn: !Ref SslCert
           SslSupportMethod: sni-only
@@ -173,7 +174,6 @@ Resources:
         Aliases: !FindInMap [ AliasMap, !Ref Stage, Aliases ]
         HttpVersion: http2
         Origins:
-#        - DomainName: !GetAtt StaticSitesBucket.DomainName
           - DomainName: !Sub
             - ${BucketName}.s3.amazonaws.com
             - BucketName: !FindInMap [ StaticSitesPipelineDeploymentBucketMap, !Ref Stage, Name ]
