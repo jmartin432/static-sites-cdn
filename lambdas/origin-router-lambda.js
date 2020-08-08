@@ -14,6 +14,7 @@ exports.handler = (event, context, callback) => {
     const blackjack = 'blackjack';
     const portfolio = 'portfolio';
     const sunflowerSynth = 'sunflower-synth'
+    const sampampulancer = 'sampampulancer'
     const www = 'www';
     const topLevel = 'justin';
 
@@ -38,7 +39,10 @@ exports.handler = (event, context, callback) => {
     } else if (routingUrl.startsWith(sunflowerSynth)) {
         console.log('Routing to sunflower-synth');
         request.origin.s3.path = `/${sunflowerSynth}`;
-    } else if (routingUrl.startsWith(portfolio) || routingUrl.startsWith(www) || routingUrl.startsWith(topLevel)){
+    } else if (routingUrl.startsWith(sampampulancer)) {
+        console.log('Routing to sunflower-synth');
+        request.origin.s3.path = `/${sampampulancer}`;
+    }else if (routingUrl.startsWith(portfolio) || routingUrl.startsWith(www) || routingUrl.startsWith(topLevel)){
         console.log('Routing to portfolio');
         request.origin.s3.path = `/${portfolio}`;
     } else {

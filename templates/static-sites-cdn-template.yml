@@ -45,6 +45,7 @@ Mappings:
         - blackjack-dev.justinlmartin.com
         - portfolio-dev.justinlmartin.com
         - sunflower-synth-dev.justinlmartin.com
+        - sampampulancer-dev.justinlmartin.com
     prod:
       Aliases:
         - test-site.justinlmartin.com
@@ -55,6 +56,7 @@ Mappings:
         - blackjack.justinlmartin.com
         - portfolio.justinlmartin.com
         - sunflower-synth.justinlmartin.com
+        - sampampulancer.justinlmartin.com
 #      Make sure these two are always last
         - www.justinlmartin.com
         - justinlmartin.com
@@ -351,6 +353,26 @@ Resources:
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 7
+          - Fn::FindInMap:
+            - AliasMap
+            - !Ref Stage
+            - Aliases
+          Type: AAAA
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: !Ref HostedZoneId
+        - Name: !Select
+          - 8
+          - Fn::FindInMap:
+            - AliasMap
+            - !Ref Stage
+            - Aliases
+          Type: A
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: !Ref HostedZoneId
+        - Name: !Select
+          - 8
           - Fn::FindInMap:
             - AliasMap
             - !Ref Stage
