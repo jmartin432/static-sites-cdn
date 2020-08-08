@@ -6,6 +6,8 @@ exports.handler = (event, context, callback) => {
     let bucketDomain = event.Records[0].cf.request.origin.s3.domainName;
     let routingUrl = event.Records[0].cf.request.headers.host[0].value;
 
+    console.log('test log')
+
     const testSite = 'test-site';
     const peaksValleys = 'peaks-valleys';
     const creativeCoding = 'creative-coding';
@@ -40,7 +42,7 @@ exports.handler = (event, context, callback) => {
         console.log('Routing to sunflower-synth');
         request.origin.s3.path = `/${sunflowerSynth}`;
     } else if (routingUrl.startsWith(sampampulancer)) {
-        console.log('Routing to sunflower-synth');
+        console.log('Routing to sampampulancer');
         request.origin.s3.path = `/${sampampulancer}`;
     }else if (routingUrl.startsWith(portfolio) || routingUrl.startsWith(www) || routingUrl.startsWith(topLevel)){
         console.log('Routing to portfolio');
