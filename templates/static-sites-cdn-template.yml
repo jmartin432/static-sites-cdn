@@ -37,7 +37,6 @@ Mappings:
   AliasMap:
     dev:
       Aliases:
-        - test-site-dev.justinlmartin.com
         - peaks-valleys-dev.justinlmartin.com
         - creative-coding-dev.justinlmartin.com
         - spaceblobman-dev.justinlmartin.com
@@ -48,7 +47,6 @@ Mappings:
         - sampampulancer-dev.justinlmartin.com
     prod:
       Aliases:
-        - test-site.justinlmartin.com
         - peaks-valleys.justinlmartin.com
         - creative-coding.justinlmartin.com
         - spaceblobman.justinlmartin.com
@@ -119,7 +117,13 @@ Resources:
                   - !Sub
                     - arn:aws:s3:::${BucketName}/*
                     - BucketName: !FindInMap [ StaticSitesPipelineDeploymentBucketMap, !Ref Stage, Name ]
-      Path: "/"
+              - Sid: AllowVersionPublishing
+                Effect: Allow
+                Action:
+                  - 'lambda:PublishVersion'
+                Resource:
+                  - '*'
+      Path: '/'
 
   PipelineDeployBucketPolicy:
     Type: 'AWS::S3::BucketPolicy'
@@ -148,6 +152,79 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
+
+# Lambdas
+
+  OriginRouterLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Ref LambdasBucket
+        S3Key: !Sub ${TimeStamp}/lambdas.zip
+      FunctionName: !Sub static-sites-cdn-${Stage}-origin-router
+      Handler: origin-router-lambda.handler
+      MemorySize: 128
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: nodejs12.x
+      Timeout: 5
+      Description: Routes Cloud Front Requests to S3 Bucket based on subdomain
+    DependsOn:
+      - LambdaRole
+
+  CustomHeadersLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Ref LambdasBucket
+        S3Key: !Sub ${TimeStamp}/lambdas.zip
+      FunctionName: !Sub static-sites-cdn-${Stage}-custom-headers
+      Handler: custom-headers-lambda.handler
+      MemorySize: 128
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: nodejs12.x
+      Timeout: 5
+      Description: Adds original host request as x-forwarded-host
+    DependsOn:
+      - LambdaRole
+
+  VerisonPublisherLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Ref LambdasBucket
+        S3Key: !Sub ${TimeStamp}/lambdas.zip
+      FunctionName: !Sub static-sites-cdn-${Stage}-version-publisher
+      Handler: version-publisher-lambda.handler
+      MemorySize: 128
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: python3.8
+      Timeout: 5
+      Description: Publishes new verions of previous two lambdas for use in CDN
+    DependsOn:
+      - LambdaRole
+
+  OriginRouterLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref OriginRouterLambdaFunction
+      Description: Routes Cloud Front Requests to S3 Bucket based on subdomain
+
+  CustomHeadersLambdaVersion:
+    Type: AWS::Lambda::Version
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref CustomHeadersLambdaFunction
+      Description: Adds original host request as x-forwarded-host
+
+
+  LambdaVersionRequest:
+    Type: 'Custom::LambdaVersionRequest'
+    Properties:
+      ServiceToken: !GetAtt VerisonPublisherLambdaFunction.Arn
+      FunctionNames:
+        - !Ref OriginRouterLambdaFunction
+        - !Ref CustomHeadersLambdaFunction
 
 # CDN
 
@@ -242,193 +319,88 @@ Resources:
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 2
-#          Just in case the short version doesnt work
-          - Fn::FindInMap:
-            - AliasMap
-            - !Ref Stage
-            - Aliases
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: A
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 2
-          - Fn::FindInMap:
-            - AliasMap
-            - !Ref Stage
-            - Aliases
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: AAAA
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 3
-          - Fn::FindInMap:
-            - AliasMap
-            - !Ref Stage
-            - Aliases
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: A
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 3
-          - Fn::FindInMap:
-            - AliasMap
-            - !Ref Stage
-            - Aliases
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: AAAA
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 4
-          - Fn::FindInMap:
-            - AliasMap
-            - !Ref Stage
-            - Aliases
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: A
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 4
-          - Fn::FindInMap:
-            - AliasMap
-            - !Ref Stage
-            - Aliases
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: AAAA
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 5
-          - Fn::FindInMap:
-            - AliasMap
-            - !Ref Stage
-            - Aliases
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: A
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 5
-          - Fn::FindInMap:
-            - AliasMap
-            - !Ref Stage
-            - Aliases
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: AAAA
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 6
-          - Fn::FindInMap:
-            - AliasMap
-            - !Ref Stage
-            - Aliases
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: A
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 6
-          - Fn::FindInMap:
-            - AliasMap
-            - !Ref Stage
-            - Aliases
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: AAAA
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 7
-          - Fn::FindInMap:
-            - AliasMap
-            - !Ref Stage
-            - Aliases
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: A
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 7
-          - Fn::FindInMap:
-            - AliasMap
-            - !Ref Stage
-            - Aliases
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: AAAA
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
-        - Name: !Select
-          - 8
-          - Fn::FindInMap:
-            - AliasMap
-            - !Ref Stage
-            - Aliases
-          Type: A
-          AliasTarget:
-            DNSName: !GetAtt StaticSitesCdn.DomainName
-            HostedZoneId: !Ref HostedZoneId
-        - Name: !Select
-          - 8
-          - Fn::FindInMap:
-            - AliasMap
-            - !Ref Stage
-            - Aliases
-          Type: AAAA
-          AliasTarget:
-            DNSName: !GetAtt StaticSitesCdn.DomainName
-            HostedZoneId: !Ref HostedZoneId
-
-# Lambdas
-
-  OriginRouterLambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Ref LambdasBucket
-        S3Key: !Sub ${TimeStamp}/lambdas.zip
-      FunctionName: !Sub static-sites-cdn-${Stage}-origin-router
-      Handler: origin-router-lambda.handler
-      MemorySize: 128
-      Role: !GetAtt LambdaRole.Arn
-      Runtime: nodejs12.x
-      Timeout: 5
-      Description: Routes Cloud Front Requests to S3 Bucket based on subdomain
-    DependsOn:
-      - LambdaRole
-
-  OriginRouterLambdaVersion:
-    Type: AWS::Lambda::Version
-    DeletionPolicy: Retain
-    Properties:
-      FunctionName: !Ref OriginRouterLambdaFunction
-      Description: Routes Cloud Front Requests to S3 Bucket based on subdomain
-
-  CustomHeadersLambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket: !Ref LambdasBucket
-        S3Key: !Sub ${TimeStamp}/lambdas.zip
-      FunctionName: !Sub static-sites-cdn-${Stage}-custom-headers
-      Handler: custom-headers-lambda.handler
-      MemorySize: 128
-      Role: !GetAtt LambdaRole.Arn
-      Runtime: nodejs12.x
-      Timeout: 5
-      Description: Adds original host request as x-forwarded-host
-    DependsOn:
-      - LambdaRole
-
-  CustomHeadersLambdaVersion:
-    Type: AWS::Lambda::Version
-    DeletionPolicy: Retain
-    Properties:
-      FunctionName: !Ref CustomHeadersLambdaFunction
-      Description: Adds original host request as x-forwarded-host
 
 Outputs:
   LatestTimeStamp:
