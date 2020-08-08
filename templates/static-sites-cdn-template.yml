@@ -93,7 +93,7 @@ Resources:
             Action:
               - sts:AssumeRole
       Policies:
-        - PolicyName: static-sites-cdn-lambda-policy
+        - PolicyName: static-sites-cdn-${Stage}-lambda-policy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -368,7 +368,7 @@ Resources:
       Code:
         S3Bucket: !Ref LambdasBucket
         S3Key: !Sub ${TimeStamp}/lambdas.zip
-      FunctionName: !Sub static-sites-cdn-origin-router-${Stage}
+      FunctionName: !Sub static-sites-cdn-${Stage}-origin-router
       Handler: origin-router-lambda.handler
       MemorySize: 128
       Role: !GetAtt LambdaRole.Arn
@@ -391,7 +391,7 @@ Resources:
       Code:
         S3Bucket: !Ref LambdasBucket
         S3Key: !Sub ${TimeStamp}/lambdas.zip
-      FunctionName: !Sub static-sites-cdn-custom-headers-${Stage}
+      FunctionName: !Sub static-sites-cdn-${Stage}-custom-headers
       Handler: custom-headers-lambda.handler
       MemorySize: 128
       Role: !GetAtt LambdaRole.Arn
