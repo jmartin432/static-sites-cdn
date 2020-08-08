@@ -95,7 +95,7 @@ Resources:
             Action:
               - sts:AssumeRole
       Policies:
-        - PolicyName: static-sites-cdn-${Stage}-lambda-policy
+        - PolicyName: !Sub static-sites-cdn-${Stage}-lambda-policy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
