@@ -1,0 +1,32 @@
+{
+  "ResponseMetadata": {
+    "RequestId": "05868e98-4ee0-446f-846f-2c88b25d207a",
+    "HTTPStatusCode": 201,
+    "HTTPHeaders": {
+      "date": "Sun, 09 Aug 2020 01:47:33 GMT",
+      "content-type": "application/json",
+      "content-length": "963",
+      "connection": "keep-alive",
+      "x-amzn-requestid": "05868e98-4ee0-446f-846f-2c88b25d207a"
+    },
+    "RetryAttempts": 0
+  },
+  "FunctionName": "static-sites-cdn-dev-origin-router",
+  "FunctionArn": "arn:aws:lambda:us-east-1:406135181037:function:static-sites-cdn-dev-origin-router:2",
+  "Runtime": "nodejs12.x",
+  "Role": "arn:aws:iam::406135181037:role/static-sites-cdn-dev-lambda-role",
+  "Handler": "origin-router-lambda.handler",
+  "CodeSize": 2238,
+  "Description": "Routes Cloud Front Requests to S3 Bucket based on subdomain",
+  "Timeout": 5,
+  "MemorySize": 128,
+  "LastModified": "2020-08-09T01:21:45.091+0000",
+  "CodeSha256": "Mkzib40sPu6uyyx0C/8lmvoKm1/dE9iBd2juRZBMcc8=",
+  "Version": "2",
+  "TracingConfig": {
+    "Mode": "PassThrough"
+  },
+  "RevisionId": "d0f2618f-0845-4649-ad96-6b4818052ed9",
+  "State": "Active",
+  "LastUpdateStatus": "Successful"
+}

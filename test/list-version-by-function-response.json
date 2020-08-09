@@ -1,0 +1,52 @@
+{
+  'ResponseMetadata': {
+    'RequestId': 'e35135ad-67d6-46d0-80d5-690c054e2bf3',
+    'HTTPStatusCode': 200,
+    'HTTPHeaders': {
+      'date': 'Sun, 09 Aug 2020 00:55:29 GMT',
+      'content-type': 'application/json',
+      'content-length': '1948',
+      'connection': 'keep-alive',
+      'x-amzn-requestid': 'e35135ad-67d6-46d0-80d5-690c054e2bf3'
+    },
+    'RetryAttempts': 0
+  },
+  'Versions': [
+    {
+      'FunctionName': 'static-sites-cdn-dev-origin-router',
+      'FunctionArn': 'arn:aws:lambda:us-east-1:406135181037:function:static-sites-cdn-dev-origin-router:$LATEST',
+      'Runtime': 'nodejs12.x',
+      'Role': 'arn:aws:iam::406135181037:role/static-sites-cdn-dev-lambda-role',
+      'Handler': 'origin-router-lambda.handler',
+      'CodeSize': 1291,
+      'Description': 'Routes Cloud Front Requests to S3 Bucket based on subdomain',
+      'Timeout': 5,
+      'MemorySize': 128,
+      'LastModified': '2020-08-09T00:10:23.725+0000',
+      'CodeSha256': 'Rnxn4OsHf5h1KQtadw6D/3OxhfIyR7kcTLz0skgjosU=',
+      'Version': '$LATEST',
+      'TracingConfig': {
+        'Mode': 'PassThrough'
+      },
+      'RevisionId': 'd0ac0dc0-c541-4e29-825b-6d48a7256b47'
+    },
+    {
+      'FunctionName': 'static-sites-cdn-dev-origin-router',
+      'FunctionArn': 'arn:aws:lambda:us-east-1:406135181037:function:static-sites-cdn-dev-origin-router:1',
+      'Runtime': 'nodejs12.x',
+      'Role': 'arn:aws:iam::406135181037:role/static-sites-cdn-dev-lambda-role',
+      'Handler': 'origin-router-lambda.handler',
+      'CodeSize': 1255,
+      'Description': 'Routes Cloud Front Requests to S3 Bucket based on subdomain',
+      'Timeout': 5,
+      'MemorySize': 128,
+      'LastModified': '2020-07-31T06:49:38.430+0000',
+      'CodeSha256': 'cL8PNehG6vop6KCcHyvOw6jDATnpTJLFHy+3Xvbr0zg=',
+      'Version': '1',
+      'TracingConfig': {
+        'Mode': 'PassThrough'
+      },
+      'RevisionId': '67826936-41d3-4a17-a304-45780b31206f'
+    }
+  ]
+}

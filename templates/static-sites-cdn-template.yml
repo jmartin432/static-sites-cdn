@@ -120,6 +120,7 @@ Resources:
               - Sid: AllowVersionPublishing
                 Effect: Allow
                 Action:
+                  - 'lambda:ListVersionsByFunction'
                   - 'lambda:PublishVersion'
                 Resource:
                   - '*'
@@ -203,28 +204,49 @@ Resources:
     DependsOn:
       - LambdaRole
 
-  OriginRouterLambdaVersion:
-    Type: AWS::Lambda::Version
-    DeletionPolicy: Retain
+  OriginRouterPublishVersionPermission:
+    Type: AWS::Lambda::Permission
     Properties:
+      Action: 'lambda:PublishVersion'
       FunctionName: !Ref OriginRouterLambdaFunction
-      Description: Routes Cloud Front Requests to S3 Bucket based on subdomain
+      Principal: 'lambda.amazonaws.com'
+      SourceArn: !GetAtt VerisonPublisherLambdaFunction.Arn
+    DependsOn:
+      - OriginRouterLambdaFunction
 
-  CustomHeadersLambdaVersion:
-    Type: AWS::Lambda::Version
-    DeletionPolicy: Retain
+  CustomHeadersPublishVersionPermission:
+    Type: AWS::Lambda::Permission
     Properties:
+      Action: 'lambda:PublishVersion'
       FunctionName: !Ref CustomHeadersLambdaFunction
-      Description: Adds original host request as x-forwarded-host
+      Principal: 'lambda.amazonaws.com'
+      SourceArn: !GetAtt VerisonPublisherLambdaFunction.Arn
+    DependsOn:
+      - CustomHeadersLambdaFunction
 
+#  OriginRouterLambdaVersion:
+#    Type: AWS::Lambda::Version
+#    DeletionPolicy: Retain
+#    Properties:
+#      FunctionName: !Ref OriginRouterLambdaFunction
+#      Description: Routes Cloud Front Requests to S3 Bucket based on subdomain
+#
+#  CustomHeadersLambdaVersion:
+#    Type: AWS::Lambda::Version
+#    DeletionPolicy: Retain
+#    Properties:
+#      FunctionName: !Ref CustomHeadersLambdaFunction
+#      Description: Adds original host request as x-forwarded-host
 
   LambdaVersionRequest:
     Type: 'Custom::LambdaVersionRequest'
     Properties:
       ServiceToken: !GetAtt VerisonPublisherLambdaFunction.Arn
       FunctionNames:
-        - !Ref OriginRouterLambdaFunction
-        - !Ref CustomHeadersLambdaFunction
+        - OriginRouterLambdaFunction: !GetAtt OriginRouterLambdaFunction.Arn
+        - CustomHeadersLambdaFunction: !GetAtt CustomHeadersLambdaFunction.Arn
+    DependsOn:
+      - VerisonPublisherLambdaFunction
 
 # CDN
 
@@ -277,9 +299,13 @@ Resources:
               - Host
           LambdaFunctionAssociations:
             - EventType: origin-request
-              LambdaFunctionARN: !Ref OriginRouterLambdaVersion
+              LambdaFunctionARN: !GetAtt LambdaVersionRequest.OriginRequestLambdaQualifiedArn
             - EventType: viewer-request
-              LambdaFunctionARN: !Ref CustomHeadersLambdaVersion
+              LambdaFunctionARN: !GetAtt LambdaVersionRequest.CustomHeadersLambdaQualifiedArn
+#            - EventType: origin-request
+#              LambdaFunctionARN: !Ref OriginRouterLambdaVersion
+#            - EventType: viewer-request
+#              LambdaFunctionARN: !Ref CustomHeadersLambdaVersion
 
 # DNS Records
 
@@ -415,9 +441,15 @@ Outputs:
     Value: !GetAtt StaticSitesCdn.DomainName
   LambdaRoleArn:
     Value: !GetAtt LambdaRole.Arn
-  OriginRouterLambdaFunctionQualifiedArn:
+  OriginRequestLambdaQualifiedArn:
     Description: Current Lambda function version
-    Value: !Ref OriginRouterLambdaVersion
-  CustomHeadersLambdaFunctionQualifiedArn:
+    Value: !GetAtt LambdaVersionRequest.OriginRequestLambdaQualifiedArn
+  CustomHeadersLambdaQualifiedArn:
     Description: Current Lambda function version
-    Value: !Ref CustomHeadersLambdaVersion
+    Value: !GetAtt LambdaVersionRequest.CustomHeadersLambdaQualifiedArn
+#  OriginRouterLambdaFunctionQualifiedArn:
+#    Description: Current Lambda function version
+#    Value: !Ref OriginRouterLambdaVersion
+#  CustomHeadersLambdaFunctionQualifiedArn:
+#    Description: Current Lambda function version
+#    Value: !Ref CustomHeadersLambdaVersion
