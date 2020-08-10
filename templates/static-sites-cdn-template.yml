@@ -161,12 +161,12 @@ Resources:
     Properties:
       Code:
         S3Bucket: !Ref LambdasBucket
-        S3Key: !Sub ${TimeStamp}/lambdas.zip
+        S3Key: !Sub ${TimeStamp}/origin-router-lambda.zip
       FunctionName: !Sub static-sites-cdn-${Stage}-origin-router
       Handler: origin-router-lambda.handler
       MemorySize: 128
       Role: !GetAtt LambdaRole.Arn
-      Runtime: nodejs12.x
+      Runtime: python3.8
       Timeout: 5
       Description: Routes Cloud Front Requests to S3 Bucket based on subdomain
     DependsOn:
@@ -177,12 +177,12 @@ Resources:
     Properties:
       Code:
         S3Bucket: !Ref LambdasBucket
-        S3Key: !Sub ${TimeStamp}/lambdas.zip
+        S3Key: !Sub ${TimeStamp}/custom-headers-lambda.zip
       FunctionName: !Sub static-sites-cdn-${Stage}-custom-headers
       Handler: custom-headers-lambda.handler
       MemorySize: 128
       Role: !GetAtt LambdaRole.Arn
-      Runtime: nodejs12.x
+      Runtime: python3.8
       Timeout: 5
       Description: Adds original host request as x-forwarded-host
     DependsOn:
@@ -193,7 +193,7 @@ Resources:
     Properties:
       Code:
         S3Bucket: !Ref LambdasBucket
-        S3Key: !Sub ${TimeStamp}/lambdas.zip
+        S3Key: !Sub ${TimeStamp}/version-publisher-lambda.zip
       FunctionName: !Sub static-sites-cdn-${Stage}-version-publisher
       Handler: version-publisher-lambda.handler
       MemorySize: 128
@@ -243,8 +243,8 @@ Resources:
     Properties:
       ServiceToken: !GetAtt VerisonPublisherLambdaFunction.Arn
       FunctionNames:
-        - OriginRouterLambdaFunction: !GetAtt OriginRouterLambdaFunction.Arn
-        - CustomHeadersLambdaFunction: !GetAtt CustomHeadersLambdaFunction.Arn
+        OriginRouterLambdaFunction: !GetAtt OriginRouterLambdaFunction.Arn
+        CustomHeadersLambdaFunction: !GetAtt CustomHeadersLambdaFunction.Arn
     DependsOn:
       - VerisonPublisherLambdaFunction
 
@@ -299,7 +299,7 @@ Resources:
               - Host
           LambdaFunctionAssociations:
             - EventType: origin-request
-              LambdaFunctionARN: !GetAtt LambdaVersionRequest.OriginRequestLambdaQualifiedArn
+              LambdaFunctionARN: !GetAtt LambdaVersionRequest.OriginRouterLambdaQualifiedArn
             - EventType: viewer-request
               LambdaFunctionARN: !GetAtt LambdaVersionRequest.CustomHeadersLambdaQualifiedArn
 #            - EventType: origin-request

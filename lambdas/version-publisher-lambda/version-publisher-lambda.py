@@ -7,12 +7,33 @@ import requests
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+def send_response(data, url):
+    try:
+        json_data = json.dumps(data)
+        logger.info('Sending response to presigned URL for CloudFormation: {response}'.format(response=json_data))
+        headers = {
+            'content-type': '',
+            'content-length': str(len(json_data))
+        }
 
+        response = requests.put(
+            url,
+            data=json_data,
+            headers=headers)
+        logger.info('CloudFormation returned response: {response}'.format(response=response))
+    except Exception as e:
+        logger.info('Sending to Cloudformation FAILED: {e}'.format(e=e))
+        raise
+
+    return
+
+    
 def handler(event, context):
-    logger.info(event)
+    logger.info('Received event: {event}'.format(event=event))
+    logger.info('Context: {context}'.format(context=context))
+
     try:
         request_type = event.get('RequestType', None)
-        resource_type = event.get('ResourceType', None)
         response_url = event.get('ResponseURL', None)
         request_properties = event.get('ResourceProperties', None)
         function_names = request_properties['FunctionNames']
@@ -20,21 +41,21 @@ def handler(event, context):
         response_data = {
             'StackId': event.get('StackId', None),
             'RequestId': event.get('RequestId', None),
-            'LogicalResourceId': event.get('LogicalResourceId', ""),
-            'PhysicalResourceId': event.get('PhysicalResourceId', '{name}-{version}'
-                                            .format(name=context.function_name, version=context.function_version)),
+            'LogicalResourceId': event.get('LogicalResourceId', ''),
+            'PhysicalResourceId': event.get('PhysicalResourceId', '{name}-{version}'.format(name=context['function_name'], version=context['function_version'])),
             'Data': {},
             'Reason': 'Check CloudWatch'
         }
     except Exception:
         logger.exception('There was an error reading event data:')
-        return {}
+        send_response(response_data, response_url)
+
     try:
         client = boto3.client('lambda')
     except Exception:
         logger.exception('There was an error creating Lambda Client:')
         response_data['Status'] = 'FAILED'
-        return {response_data}
+        send_response(response_data, response_url)
 
     for key in function_names:
         try:
@@ -54,29 +75,12 @@ def handler(event, context):
                 logger.info('Qualified function ARN: {arn}'.format(arn=publish_response['FunctionArn']))
         except Exception:
             response_data['Status'] = 'FAILED'
-            logger.exception('There was an error sending publish version request, returning: {response}'
-                             .format(response=response_data))
-            return response_data
+            logger.exception('There was an error sending publish version request')
+            send_response(response_data, response_url)
 
     logger.info('Ready to send data: {data}'.format(data=response_data['Data']))
-
-    json_response_data = json.dumps(response_data)
-    headers = {
-        'content-type': '',
-        'content-length': str(len(json_response_data))
-    }
-    logger.info('Sending response to S3 for CloudFormation: {response}'.format(response=json_response_data))
-    try:
-        s3_response = requests.put(
-            response_url,
-            data=json_response_data,
-            headers=headers)
-        logger.info('S3 returned status code: {response}'.format(response=s3_response))
-    except Exception:
-        response_data['Status'] = 'FAILED'
-        logger.exception('There was an error sending response to S3 Bucket, returning: {response}'
-                         .format(response=response_data))
-        return response_data
+    
+    send_response(response_data, response_url)
 
     return response_data
 

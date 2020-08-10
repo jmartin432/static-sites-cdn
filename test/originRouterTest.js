@@ -1,5 +1,5 @@
 const expect  = require('chai').expect;
-const originRouter = require('../lambdas/origin-router-lambda');
+const originRouter = require('../lambdas/origin-router-lambda/origin-router-lambda');
 const event = require('./origin-request-test-event');
 
 // Dev Tests...
