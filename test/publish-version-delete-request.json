@@ -1,0 +1,17 @@
+{
+  "RequestType": "Delete",
+  "ServiceToken": "arn:aws:lambda:us-east-1:123456789101:function:static-sites-cdn-dev-version-publisher",
+  "ResponseURL": "https://cloudformation-custom-resource-response-useast1.s3.amazonaws.com/arn%3Aaws%3Acloudformation%3Aus-east-1%3A123456789101%3Astack/static-sites-cdn-dev/ce919e90-fc6f-11e9-b837-12e346dd5d0c%7CLambdaVersionRequest%7C9ac66290-1aea-496b-8908-46cde833529a?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20200811T044544Z&X-Amz-SignedHeaders=host&X-Amz-Expires=7200&X-Amz-Credential=AKIA6L7Q4OWT3SMRMIS5%2F20200811%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=8b7df7a28cc1ae9d9b987222c36ec013c48de2aa021436d5adc9f536788f3dc3",
+  "StackId": "arn:aws:cloudformation:us-east-1:123456789101:stack/static-sites-cdn-dev/ce919e90-fc6f-11e9-b837-12e346dd5d0c",
+  "RequestId": "9ac66290-1aea-496b-8908-46cde833529a",
+  "LogicalResourceId": "LambdaVersionRequest",
+  "PhysicalResourceId": "static-sites-cdn-version-publish-b90692d",
+  "ResourceType": "Custom::LambdaVersionRequest",
+  "ResourceProperties": {
+    "ServiceToken": "arn:aws:lambda:us-east-1:123456789101:function:static-sites-cdn-dev-version-publisher",
+    "FunctionArns": {
+      "OriginRouterLambda": "arn:aws:lambda:us-east-1:123456789101:function:static-sites-cdn-dev-origin-router",
+      "CustomHeadersLambda": "arn:aws:lambda:us-east-1:123456789101:function:static-sites-cdn-dev-custom-headers"
+    }
+  }
+}

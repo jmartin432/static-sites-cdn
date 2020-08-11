@@ -6,6 +6,7 @@ logger.setLevel(logging.INFO)
 
 
 def handler(event, context):
+    # Test Comment
     logger.info('Received event: {event}'.format(event=event))
 
     request = event['Records'][0]['cf']['request']

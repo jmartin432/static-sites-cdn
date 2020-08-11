@@ -5,6 +5,7 @@ logger.setLevel(logging.INFO)
 
 
 def handler(event, context):
+    # test comment
     logger.info('Received event: {event}'.format(event=event))
 
     keys_list = [
@@ -25,7 +26,7 @@ def handler(event, context):
     bucket_domain = event['Records'][0]['cf']['request']['origin']['s3']['domainName']
     routing_url = event['Records'][0]['cf']['request']['headers']['host'][0]['value']
     subdomain = routing_url.split('.')[0]
-    site = subdomain.replace('-dev', ' ')
+    site = subdomain.replace('-dev', '')
 
     logger.info('Routing: {url}, {subdomain}, {site}'.format(url=routing_url, subdomain=subdomain, site=site))
 

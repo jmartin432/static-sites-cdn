@@ -1,0 +1,25 @@
+{
+  "RequestType": "Update",
+  "ServiceToken": "arn:aws:lambda:us-east-1:123456789101:function:static-sites-cdn-dev-version-publisher",
+  "ResponseURL": "https://cloudformation-custom-resource-response-useast1.s3.amazonaws.com/arn%3Aaws%3Acloudformation%3Aus-east-1%3A123456789101%3Astack/static-sites-cdn-dev/ce919e90-fc6f-11e9-b837-12e346dd5d0c%7CLambdaVersionRequest%7C9613eb3c-6ef8-49c7-b772-bc3826de629d?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20200811T023508Z&X-Amz-SignedHeaders=host&X-Amz-Expires=7200&X-Amz-Credential=AKIA6L7Q4OWT3SMRMIS5%2F20200811%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=dfe9cef9b177d1d9cc9e9b2489bc888f569d870642ee8f74851f4c2613a0615b",
+  "StackId": "arn:aws:cloudformation:us-east-1:123456789101:stack/static-sites-cdn-dev/ce919e90-fc6f-11e9-b837-12e346dd5d0c",
+  "RequestId": "9613eb3c-6ef8-49c7-b772-bc3826de629d",
+  "LogicalResourceId": "LambdaVersionRequest",
+  "PhysicalResourceId": "static-sites-cdn-version-publish-b90692d",
+  "ResourceType": "Custom::LambdaVersionRequest",
+  "ResourceProperties": {
+    "ServiceToken": "arn:aws:lambda:us-east-1:123456789101:function:static-sites-cdn-dev-version-publisher",
+    "FunctionArns": {
+      "OriginRouterLambda": "arn:aws:lambda:us-east-1:123456789101:function:static-sites-cdn-dev-origin-router",
+      "CustomHeadersLambda": "arn:aws:lambda:us-east-1:123456789101:function:static-sites-cdn-dev-custom-headers"
+    },
+    "TimeStamp": "20200810T193441"
+  },
+  "OldResourceProperties": {
+    "ServiceToken": "arn:aws:lambda:us-east-1:123456789101:function:static-sites-cdn-dev-version-publisher",
+    "FunctionArns": {
+      "OriginRouterLambda": "arn:aws:lambda:us-east-1:123456789101:function:static-sites-cdn-dev-origin-router",
+      "CustomHeadersLambda": "arn:aws:lambda:us-east-1:123456789101:function:static-sites-cdn-dev-custom-headers"
+    }
+  }
+}

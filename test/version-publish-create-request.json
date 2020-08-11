@@ -1,0 +1,16 @@
+{
+  "RequestType": "Create",
+  "ServiceToken": "arn:aws:lambda:us-east-1:123456789101:function:static-sites-cdn-dev-version-publisher",
+  "ResponseURL": "https://cloudformation-custom-resource-response-useast1.s3.amazonaws.com/arn%3Aaws%3Acloudformation%3Aus-east-1%3A123456789101%3Astack/static-sites-cdn-dev/ce919e90-fc6f-11e9-b837-12e346dd5d0c%7CLambdaVersionRequest%7C585a94de-9227-48f6-b66e-982daf979817?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20200808T230919Z&X-Amz-SignedHeaders=host&X-Amz-Expires=7200&X-Amz-Credential=AKIA6L7Q4OWT3SMRMIS5%2F20200808%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=195b6d5dc6f779bc476b9c1fa557b07838b8fb169c003c8d01ff4ad938b0f24d",
+  "StackId": "arn:aws:cloudformation:us-east-1:123456789101:stack/static-sites-cdn-dev/ce919e90-fc6f-11e9-b837-12e346dd5d0c",
+  "RequestId": "585a94de-9227-48f6-b66e-982daf979817",
+  "LogicalResourceId": "LambdaVersionRequest",
+  "ResourceType": "Custom::LambdaVersionRequest",
+  "ResourceProperties": {
+    "ServiceToken": "arn:aws:lambda:us-east-1:123456789101:function:static-sites-cdn-dev-version-publisher",
+    "FunctionNames": [
+      "static-sites-cdn-dev-origin-router",
+      "static-sites-cdn-dev-custom-headers"
+    ]
+  }
+}

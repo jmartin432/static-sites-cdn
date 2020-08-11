@@ -3,9 +3,11 @@ import time
 import logging
 import json
 import requests
+import hashlib
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+
 
 def send_response(data, url):
     try:
@@ -15,7 +17,6 @@ def send_response(data, url):
             'content-type': '',
             'content-length': str(len(json_data))
         }
-
         response = requests.put(
             url,
             data=json_data,
@@ -27,41 +28,56 @@ def send_response(data, url):
 
     return
 
-    
+
+def get_hash(stack_id, logical_id, time_stamp):
+    h = hashlib.new('md5')
+    h.update(stack_id.encode('utf-8'))
+    h.update(logical_id.encode('utf-8'))
+    h.update(time_stamp.encode('utf-8'))
+    return 'static-sites-cdn-version-publish-{hash}'.format(hash=str(h.hexdigest())[0:7])
+
+
 def handler(event, context):
     logger.info('Received event: {event}'.format(event=event))
-    logger.info('Context: {context}'.format(context=context))
-
-    try:
-        request_type = event.get('RequestType', None)
-        response_url = event.get('ResponseURL', None)
-        request_properties = event.get('ResourceProperties', None)
-        function_names = request_properties['FunctionNames']
-
-        response_data = {
-            'StackId': event.get('StackId', None),
-            'RequestId': event.get('RequestId', None),
-            'LogicalResourceId': event.get('LogicalResourceId', ''),
-            'PhysicalResourceId': event.get('PhysicalResourceId', '{name}-{version}'.format(name=context['function_name'], version=context['function_version'])),
-            'Data': {},
-            'Reason': 'Check CloudWatch'
-        }
-    except Exception:
-        logger.exception('There was an error reading event data:')
+    request_type = event.get('RequestType', None)
+    response_url = event.get('ResponseURL', None)
+    request_properties = event.get('ResourceProperties', None)
+    time_stamp = request_properties['TimeStamp']
+    response_data = {
+        'StackId': event.get('StackId', None),
+        'RequestId': event.get('RequestId', None),
+        'LogicalResourceId': event.get('LogicalResourceId', None),
+        'PhysicalResourceId': event.get('PhysicalResourceId', None)
+    }
+    if request_type == 'Delete':
+        logger.info('Received Delete Request')
+        response_data['Status'] = 'SUCCESS'
         send_response(response_data, response_url)
+        return response_data
+    elif request_type == 'Create':
+        logger.info('Received Create Request')
 
-    try:
-        client = boto3.client('lambda')
-    except Exception:
-        logger.exception('There was an error creating Lambda Client:')
-        response_data['Status'] = 'FAILED'
-        send_response(response_data, response_url)
+    else:
+        logger.info('Received Update Request')
 
-    for key in function_names:
+    response_data['PhysicalResourceId'] = get_hash(response_data['StackId'],
+                                                   response_data['LogicalResourceId'],
+                                                   time_stamp)
+    logger.info('New Resource Physical ID: {id}'.format(id=response_data['PhysicalResourceId']))
+
+    response_data['Data'] = {
+        'PhysicalResourceId': response_data['PhysicalResourceId']
+    }
+    response_data['Reason'] = 'Check CloudWatch'
+
+    function_arns = request_properties['FunctionArns']
+    lambda_client = boto3.client('lambda')
+
+    for key in function_arns:
         try:
-            logger.info('Publishing version for function: {name}'.format(name=function_names[key]))
-            publish_response = client.publish_version(
-                FunctionName=function_names[key]
+            logger.info('Publishing version for function: {name}'.format(name=function_arns[key]))
+            publish_response = lambda_client.publish_version(
+                FunctionName=function_arns[key]
             )
             logger.info('Publish version response: {response}'.format(response=publish_response))
             if publish_response['ResponseMetadata']['HTTPStatusCode'] != 201:
