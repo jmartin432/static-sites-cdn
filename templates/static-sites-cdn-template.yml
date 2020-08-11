@@ -224,20 +224,6 @@ Resources:
     DependsOn:
       - CustomHeadersLambdaFunction
 
-#  OriginRouterLambdaVersion:
-#    Type: AWS::Lambda::Version
-#    DeletionPolicy: Retain
-#    Properties:
-#      FunctionName: !Ref OriginRouterLambdaFunction
-#      Description: Routes Cloud Front Requests to S3 Bucket based on subdomain
-#
-#  CustomHeadersLambdaVersion:
-#    Type: AWS::Lambda::Version
-#    DeletionPolicy: Retain
-#    Properties:
-#      FunctionName: !Ref CustomHeadersLambdaFunction
-#      Description: Adds original host request as x-forwarded-host
-
   LambdaVersionRequest:
     Type: 'Custom::LambdaVersionRequest'
     Properties:
@@ -305,10 +291,6 @@ Resources:
               LambdaFunctionARN: !GetAtt LambdaVersionRequest.OriginRouterLambdaQualifiedArn
             - EventType: viewer-request
               LambdaFunctionARN: !GetAtt LambdaVersionRequest.CustomHeadersLambdaQualifiedArn
-#            - EventType: origin-request
-#              LambdaFunctionARN: !Ref OriginRouterLambdaVersion
-#            - EventType: viewer-request
-#              LambdaFunctionARN: !Ref CustomHeadersLambdaVersion
     DependsOn:
       - LambdaVersionRequest
 
