@@ -47,7 +47,7 @@ Mappings:
         - sampampulancer-dev.justinlmartin.com
         - qr-dev.justinlmartin.com
         - landing-page-dev.justinlmartin.com
-        - unicorn-warp-dev
+        - unicorn-warp-dev.justinlmartin.com
     prod:
       Aliases:
         - peaks-valleys.justinlmartin.com
@@ -60,7 +60,7 @@ Mappings:
         - sampampulancer.justinlmartin.com
         - qr.justinlmartin.com
         - landing-page.justinlmartin.com
-        - unicorn-warp
+        - unicorn-warp.justinlmartin.com
 #      Make sure these are always last
         - www.justinlmartin.com
         - justinlmartin.com
@@ -458,10 +458,10 @@ Resources:
         - Name: !Select
           - 10
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
-        Type: AAAA
-        AliasTarget:
-          DNSName: !GetAtt StaticSitesCdn.DomainName
-          HostedZoneId: !Ref HostedZoneId
+          Type: AAAA
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: !Ref HostedZoneId
 
 Outputs:
   LatestTimeStamp:
