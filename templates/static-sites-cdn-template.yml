@@ -46,6 +46,7 @@ Mappings:
         - sunflower-synth-dev.justinlmartin.com
         - sampampulancer-dev.justinlmartin.com
         - qr-dev.justinlmartin.com
+        - landing-page-dev.justinlmartin.com
     prod:
       Aliases:
         - peaks-valleys.justinlmartin.com
@@ -57,6 +58,7 @@ Mappings:
         - sunflower-synth.justinlmartin.com
         - sampampulancer.justinlmartin.com
         - qr.justinlmartin.com
+        - landing-page.justinlmartin.com
 #      Make sure these are always last
         - www.justinlmartin.com
         - justinlmartin.com
@@ -425,6 +427,20 @@ Resources:
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 8
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
+          Type: AAAA
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: !Ref HostedZoneId
+        - Name: !Select
+          - 9
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
+          Type: A
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: !Ref HostedZoneId
+        - Name: !Select
+          - 9
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: AAAA
           AliasTarget:
