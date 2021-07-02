@@ -12,6 +12,7 @@ def handler(event, context):
         'www',
         'justinlmartin',
         'portfolio',
+        'qr',
         'test-site',
         'peaks-valleys',
         'creative-coding',
@@ -32,7 +33,7 @@ def handler(event, context):
 
     if site not in keys_list:
         logger.error('Incorrect subdomain. Routing to default root object.')
-    elif site == 'www' or site == 'portfolio' or site == 'justinlmartin':
+    elif site == 'www' or site == 'portfolio' or site == 'justinlmartin' or site == 'qr':
         logger.info('Routing to portfolio')
         request['origin']['s3']['path'] = '/portfolio'
     else:

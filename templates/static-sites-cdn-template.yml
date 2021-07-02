@@ -45,6 +45,7 @@ Mappings:
         - portfolio-dev.justinlmartin.com
         - sunflower-synth-dev.justinlmartin.com
         - sampampulancer-dev.justinlmartin.com
+        - qr-dev.justinlmartin.com
     prod:
       Aliases:
         - peaks-valleys.justinlmartin.com
@@ -55,7 +56,8 @@ Mappings:
         - portfolio.justinlmartin.com
         - sunflower-synth.justinlmartin.com
         - sampampulancer.justinlmartin.com
-#      Make sure these two are always last
+        - qr.justinlmartin.com
+#      Make sure these are always last
         - www.justinlmartin.com
         - justinlmartin.com
   LambdasBucketMap:
@@ -409,6 +411,20 @@ Resources:
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 7
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
+          Type: AAAA
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: !Ref HostedZoneId
+        - Name: !Select
+          - 8
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
+          Type: A
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: !Ref HostedZoneId
+        - Name: !Select
+          - 8
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: AAAA
           AliasTarget:
