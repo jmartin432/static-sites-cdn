@@ -1,5 +1,4 @@
 import boto3
-import time
 import logging
 import json
 import requests
@@ -38,7 +37,7 @@ def get_hash(stack_id, logical_id, time_stamp):
 
 
 def handler(event, context):
-    logger.info('Received event: {event}'.format(event=event))
+    logger.info('Received event: {event}'.format(event=json.dumps(event)))
     request_type = event.get('RequestType', None)
     response_url = event.get('ResponseURL', None)
     request_properties = event.get('ResourceProperties', None)
@@ -79,7 +78,7 @@ def handler(event, context):
             publish_response = lambda_client.publish_version(
                 FunctionName=function_arns[key]
             )
-            logger.info('Publish version response: {response}'.format(response=publish_response))
+            logger.info('Publish version response: {response}'.format(response=json.dumps(publish_response)))
             if publish_response['ResponseMetadata']['HTTPStatusCode'] != 201:
                 logger.error('Publish Version FAILED: HTTP Status Code: {status_code}'
                              .format(status_code=publish_response['ResponseMetadata']['HTTPStatusCode']))
@@ -94,7 +93,7 @@ def handler(event, context):
             logger.exception('There was an error sending publish version request')
             send_response(response_data, response_url)
 
-    logger.info('Ready to send data: {data}'.format(data=response_data['Data']))
+    logger.info('Ready to send data: {data}'.format(data=json.dumps(response_data['Data'])))
     
     send_response(response_data, response_url)
 

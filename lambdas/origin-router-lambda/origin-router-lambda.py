@@ -1,4 +1,5 @@
 import logging
+import json
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -6,7 +7,7 @@ logger.setLevel(logging.INFO)
 
 def handler(event, context):
     # test comment
-    logger.info('Received event: {event}'.format(event=event))
+    logger.info('Received event: {event}'.format(event=json.dumps(event)))
 
     keys_list = [
         'www',
@@ -46,6 +47,6 @@ def handler(event, context):
         'key': 'Host',
         'value': bucket_domain
     }]
-    logger.info('Updated request to: {request}'.format(request=request))
+    logger.info('Updated request to: {request}'.format(request=json.dumps(request)))
     return request
 

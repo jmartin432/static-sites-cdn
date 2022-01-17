@@ -7,4 +7,5 @@ jspm_packages
 /secrets.yml
 /scripts/*
 /lambdas/version-publisher-lambda/dependencies/
+/lambdas/custom-headers-lambda/dependencies/
 /test/sample-curl.txt
