@@ -45,9 +45,8 @@ Mappings:
         - coding-portfolio-dev.justinlmartin.com
         - sunflower-synth-dev.justinlmartin.com
         - sampampulancer-dev.justinlmartin.com
-        - qr-dev.justinlmartin.com
-        - landing-page-dev.justinlmartin.com
         - unicorn-warp-dev.justinlmartin.com
+        - landing-page-dev.justinlmartin.com
     prod:
       Aliases:
         - peaks-valleys.justinlmartin.com
@@ -58,12 +57,11 @@ Mappings:
         - coding-portfolio.justinlmartin.com
         - sunflower-synth.justinlmartin.com
         - sampampulancer.justinlmartin.com
-        - qr.justinlmartin.com
-        - landing-page.justinlmartin.com
         - unicorn-warp.justinlmartin.com
-#      Make sure these are always last
-        - www.justinlmartin.com
         - justinlmartin.com
+#      This one gets a separate CNAME record manually
+        - www.justinlmartin.com
+
   LambdasBucketMap:
     dev:
       Name: '{{resolve:ssm:static-sites-cdn-lambdas-dev-bucket:1}}'
@@ -308,6 +306,7 @@ Resources:
       HostedZoneName: !Sub ${RootDomain}. # The last period is important?
       Comment: DNS records associated with Static Sites CDN
       RecordSets:
+#        - peaks-valleys-dev.justinlmartin.com
         - Name: !Select
           - 0
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
@@ -322,6 +321,7 @@ Resources:
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
+#        - creative-coding-dev.justinlmartin.com
         - Name: !Select
           - 1
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
@@ -336,6 +336,7 @@ Resources:
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
+#        - spaceblobman-dev.justinlmartin.com
         - Name: !Select
           - 2
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
@@ -350,6 +351,7 @@ Resources:
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
+#        - sunrise-sunset-dev.justinlmartin.com
         - Name: !Select
           - 3
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
@@ -364,6 +366,7 @@ Resources:
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
+#        - blackjack-dev.justinlmartin.com
         - Name: !Select
           - 4
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
@@ -378,6 +381,7 @@ Resources:
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
+#        - coding-portfolio-dev.justinlmartin.com
         - Name: !Select
           - 5
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
@@ -392,6 +396,7 @@ Resources:
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
+#        - sunflower-synth-dev.justinlmartin.com
         - Name: !Select
           - 6
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
@@ -406,6 +411,7 @@ Resources:
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
+#        - sampampulancer-dev.justinlmartin.com
         - Name: !Select
           - 7
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
@@ -420,6 +426,7 @@ Resources:
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
+#        - unicorn-warp-dev.justinlmartin.com
         - Name: !Select
           - 8
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
@@ -434,6 +441,8 @@ Resources:
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
+#        - landing-page-dev.justinlmartin.com
+#        - justinlmartin.com
         - Name: !Select
           - 9
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
@@ -443,20 +452,6 @@ Resources:
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 9
-          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
-          Type: AAAA
-          AliasTarget:
-            DNSName: !GetAtt StaticSitesCdn.DomainName
-            HostedZoneId: !Ref HostedZoneId
-        - Name: !Select
-          - 10
-          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
-          Type: A
-          AliasTarget:
-            DNSName: !GetAtt StaticSitesCdn.DomainName
-            HostedZoneId: !Ref HostedZoneId
-        - Name: !Select
-          - 10
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: AAAA
           AliasTarget:
