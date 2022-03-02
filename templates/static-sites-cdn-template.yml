@@ -46,6 +46,7 @@ Mappings:
         - sunflower-synth-dev.justinlmartin.com
         - sampampulancer-dev.justinlmartin.com
         - unicorn-warp-dev.justinlmartin.com
+        - resume-dev.justinlmartin.com
         - landing-page-dev.justinlmartin.com
     prod:
       Aliases:
@@ -58,6 +59,7 @@ Mappings:
         - sunflower-synth.justinlmartin.com
         - sampampulancer.justinlmartin.com
         - unicorn-warp.justinlmartin.com
+        - resume.justinlmartin.com
         - justinlmartin.com
 #      This one gets a separate CNAME record manually
         - www.justinlmartin.com
@@ -441,8 +443,7 @@ Resources:
           AliasTarget:
             DNSName: !GetAtt StaticSitesCdn.DomainName
             HostedZoneId: !Ref HostedZoneId
-#        - landing-page-dev.justinlmartin.com
-#        - justinlmartin.com
+#        - resume-dev.justinlmartin.com
         - Name: !Select
           - 9
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
@@ -452,6 +453,22 @@ Resources:
             HostedZoneId: !Ref HostedZoneId
         - Name: !Select
           - 9
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
+          Type: AAAA
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: !Ref HostedZoneId
+#        - landing-page-dev.justinlmartin.com
+#        - justinlmartin.com
+        - Name: !Select
+          - 10
+          - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
+          Type: A
+          AliasTarget:
+            DNSName: !GetAtt StaticSitesCdn.DomainName
+            HostedZoneId: !Ref HostedZoneId
+        - Name: !Select
+          - 10
           - !FindInMap [ AliasMap, !Ref Stage, Aliases ]
           Type: AAAA
           AliasTarget:

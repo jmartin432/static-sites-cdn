@@ -22,7 +22,8 @@ def handler(event, context):
         'blackjack',
         'sunflower-synth',
         'sampampulancer',
-        'unicorn-warp'
+        'unicorn-warp',
+        'resume'
     ]
 
     request = event['Records'][0]['cf']['request']
