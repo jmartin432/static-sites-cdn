@@ -62,8 +62,6 @@ Mappings:
         - resume.justinlmartin.com
         - justinlmartin.com
 #      This one gets a separate CNAME record manually
-        - www.justinlmartin.com
-
   LambdasBucketMap:
     dev:
       Name: '{{resolve:ssm:static-sites-cdn-lambdas-dev-bucket:1}}'
