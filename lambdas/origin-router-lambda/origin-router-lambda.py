@@ -10,7 +10,6 @@ def handler(event, context):
     logger.info('Received event: {event}'.format(event=json.dumps(event)))
 
     keys_list = [
-        'www',
         'justinlmartin',
         'coding-portfolio',
         'landing-page',
@@ -36,7 +35,7 @@ def handler(event, context):
 
     if site not in keys_list:
         logger.error('Incorrect subdomain. Routing to default root object.')
-    elif site == 'www' or site == 'justinlmartin':
+    elif site == 'justinlmartin':
         logger.info('Re-Routing to landing page')
         request['origin']['s3']['path'] = '/landing-page'
     else:
